@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: php-deployment
+  name: php
   labels:
     tier: backend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: php
@@ -17,22 +17,20 @@ spec:
         tier: backend
     spec:
       volumes:
-      - name: php-code
+      - name: code
         persistentVolumeClaim:
-          claimName: php-volume-claim
+          claimName: code
       containers:
       - name: php
-        image: php:7.4-fpm
-        ports:
-        - containerPort: 9000
+        image: php:7-fpm
         volumeMounts:
-        - name: php-code
+        - name: code
           mountPath: /code
       initContainers:
       - name: install
         image: busybox
         volumeMounts:
-        - name: php-code
+        - name: code
           mountPath: /code
         command:
         - wget

@@ -12,3 +12,5 @@ spec:
     - name: http
       protocol: TCP
       port: 80
+  externalIPs:
+  - 172.104.173.37

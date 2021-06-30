@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: waf
+  name: waf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: waf
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: waf
+    spec:
+      containers:
+        - image: owasp/modsecurity:3
+          name: waf
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              name: waf-claim0
+            - mountPath: /etc/nginx/conf.d/default.conf
+              name: waf-claim1
+            - mountPath: /etc/conf.d/modsecurity.conf
+              name: waf-claim2
+            - mountPath: /etc/modsecurity.d/modsecurity.conf
+              name: waf-claim3
+            - mountPath: /etc/modsecurity.d/setup.conf
+              name: waf-claim4
+            - mountPath: /usr/local/modsecurity-crs/
+              name: waf-claim5
+            - mountPath: /usr/share/nginx/html/403.html
+              name: waf-claim6
+            - mountPath: /var/log/modsec_audit.log
+              name: waf-claim7
+      restartPolicy: Always
+      volumes:
+        - name: waf-claim0
+          persistentVolumeClaim:
+            claimName: waf-claim0
+        - name: waf-claim1
+          persistentVolumeClaim:
+            claimName: waf-claim1
+        - name: waf-claim2
+          persistentVolumeClaim:
+            claimName: waf-claim2
+        - name: waf-claim3
+          persistentVolumeClaim:
+            claimName: waf-claim3
+        - name: waf-claim4
+          persistentVolumeClaim:
+            claimName: waf-claim4
+        - name: waf-claim5
+          persistentVolumeClaim:
+            claimName: waf-claim5
+        - name: waf-claim6
+          persistentVolumeClaim:
+            claimName: waf-claim6
+        - name: waf-claim7
+          persistentVolumeClaim:
+            claimName: waf-claim7
+status: {}

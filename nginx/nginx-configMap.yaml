@@ -7,14 +7,11 @@ metadata:
 data:
   config : |
     server {
-      listen 80;
-      listen [::]:80;
+      listen 443 ssl;
+      listen [::]:443 ssl;
 
-      #listen 443 ssl;
-      #listen [::]:443 ssl;
-
-      #ssl_certificate ssl/tls.crt;
-      #ssl_certificate_key ssl/tls.key;
+      ssl_certificate ssl/tls.crt;
+      ssl_certificate_key ssl/tls.key;
 
       index index.php index.html;
       error_log  /var/log/nginx/error.log;
@@ -23,11 +20,16 @@ data:
       root /code;
 
       location / {
-          index index.html index.php;
+          try_files $uri $uri/ /index.php?$query_string;
       }
+
       location ~ \.php$ {
-          fastcgi_pass php-service:9000;
+          try_files $uri =404;
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          fastcgi_pass php:9000;
           fastcgi_index index.php;
-          include fastcgi.conf;
-      }
+          include fastcgi_params;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
     }

@@ -7,18 +7,26 @@ metadata:
 data:
   config : |
 
-    upstream nginx-service {
-        server nginx-service:8080;
+    upstream app_server {
+        server nginx-service:443;
+        keepalive 128;
     }
+
     server {
         listen 80;
         listen [::]:80;
+        location / {
+            if ($scheme = http) {
+                return 301 https://$host$request_uri;
+            }
+        }
+    }
 
-        #listen 443 ssl;
-        #listen [::]:443 ssl;
-
-        #ssl_certificate ssl/tls.crt;
-        #ssl_certificate_key ssl/tls.key;
+    server {
+        listen 443 ssl;
+        listen [::]:443 ssl;
+        ssl_certificate ssl/tls.crt;
+        ssl_certificate_key ssl/tls.key;
 
         modsecurity on;
         modsecurity_rules_file /etc/nginx/modsecurity.d/include.conf;
@@ -28,7 +36,7 @@ data:
         access_log /var/log/nginx/access.log;
 
         location / {
-            proxy_pass http://nginx-service;
+            proxy_pass https://app_server;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

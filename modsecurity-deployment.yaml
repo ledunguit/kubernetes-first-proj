@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modsecurity-deployment
+  labels:
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: modsecurity
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: modsecurity
+        tier: backend
+    spec:
+      volumes:
+      - name: reverse-proxy
+        configMap:
+          name: modsecurity-config
+          items:
+          - key: config
+            path: reverse-proxy.conf
+      #- name: nginx-ssl
+      #  secret:
+      #    secretName: my-tls-secret
+      containers:
+      - name: security
+        image: ledungdocker/modsecurity:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: reverse-proxy
+          mountPath: /etc/nginx/conf.d
+        #- name: nginx-ssl
+        #  mountPath: "/etc/nginx/ssl"
+        #  readOnly: true

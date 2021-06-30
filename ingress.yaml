@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "172.104.173.37"
+spec:
+  tls:
+  - hosts:
+    - itsec.codes
+    secretName: tls-secret
+  rules:
+    - host: itsec.codes
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: modsecurity-service
+                port:
+                  number: 80

@@ -23,17 +23,17 @@ spec:
           items:
           - key: config
             path: reverse-proxy.conf
-      #- name: nginx-ssl
-      #  secret:
-      #    secretName: my-tls-secret
+      - name: nginx-ssl
+        secret:
+          secretName: tls-secret
       containers:
-      - name: security
+      - name: modsecurity
         image: ledungdocker/modsecurity:latest
         ports:
-        - containerPort: 80
+        - containerPort: 443
         volumeMounts:
         - name: reverse-proxy
           mountPath: /etc/nginx/conf.d
-        #- name: nginx-ssl
-        #  mountPath: "/etc/nginx/ssl"
-        #  readOnly: true
+        - name: nginx-ssl
+          mountPath: "/etc/nginx/ssl"
+          readOnly: true

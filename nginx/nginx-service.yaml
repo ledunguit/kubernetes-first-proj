@@ -9,6 +9,6 @@ spec:
     app: nginx
     tier: backend
   ports:
-    - name: http
+    - name: https
       protocol: TCP
-      port: 8080
+      port: 443

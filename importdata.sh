@@ -1,0 +1,1 @@
+docker exec -i fde41fdab1eb sh -c 'exec mysql -uledung -p"$MYSQL_PASSWORD" webapp_database' < test_data.sql
